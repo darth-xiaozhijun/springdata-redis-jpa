@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -62,6 +63,30 @@ public class RedisTest {
 		//更换序列化器
 		this.redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
 		Users users = (Users)this.redisTemplate.opsForValue().get("users");
+		System.out.println(users);
+	}
+	
+	/**
+	 * 添加Users JSON格式
+	 */
+	@Test
+	public void test5(){
+		Users users = new Users();
+		users.setAge(23);
+		users.setId(2);
+		users.setName("李四");
+		
+		this.redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Users.class));
+		this.redisTemplate.opsForValue().set("usersjson", users);
+	}
+	
+	/**
+	 * 获取Uesrs JSON格式
+	 */
+	@Test
+	public void test6(){
+		this.redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Users.class));
+		Users users = (Users)this.redisTemplate.opsForValue().get("usersjson");
 		System.out.println(users);
 	}
 
